@@ -116,15 +116,24 @@ public class TesterHomeTest {
     }
 
     @Test
-    public void multiApi(){
-        String name = given().get("https://testerhome.com/api/v3/topics/6040.json").prettyPeek()
-        .then().statusCode(200).extract().path("topic.user.name")
+    public void multiApiMultiData(){
+        Response response = given().get("https://testerhome.com/api/v3/topics/6040.json").prettyPeek()
+        //.then().statusCode(200).extract().path("topic.user.name")
+        .then().statusCode(200).extract().response()
         ;
+        System.out.println(response);
+        String name = response.path("topic.user.name");
+        Integer uid=response.path("topic.user.id");
+
         System.out.println(name);
+        System.out.println(uid);
+
         //https://testerhome.com/search?q=思寒
         given().queryParam("q",name)
-                .cookie("uid",name)
-                .when().get("/search")
-                .then().statusCode(200).body(containsString(name));
+                .cookie("name",name)
+                .cookie("uid",uid)
+        .when().get("/search")
+        .then().statusCode(200).body(containsString(name))
+        ;
     }
 }
